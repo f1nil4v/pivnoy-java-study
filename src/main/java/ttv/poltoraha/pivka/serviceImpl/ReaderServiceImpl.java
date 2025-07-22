@@ -9,6 +9,7 @@ import ttv.poltoraha.pivka.entity.Quote;
 import ttv.poltoraha.pivka.entity.Reader;
 import ttv.poltoraha.pivka.entity.Reading;
 import ttv.poltoraha.pivka.repository.BookRepository;
+import ttv.poltoraha.pivka.repository.QuoteRepository;
 import ttv.poltoraha.pivka.repository.ReaderRepository;
 import ttv.poltoraha.pivka.service.ReaderService;
 import util.MyUtility;
@@ -19,6 +20,8 @@ import util.MyUtility;
 public class ReaderServiceImpl implements ReaderService {
     private final ReaderRepository readerRepository;
     private final BookRepository bookRepository;
+    private final QuoteRepository quoteRepository; // переменная репозитория цитат
+
     @Override
     public void createQuote(String username, Integer book_id, String text) {
         val newQuote = new Quote();
@@ -30,10 +33,11 @@ public class ReaderServiceImpl implements ReaderService {
         newQuote.setText(text);
         newQuote.setReader(reader);
 
-        reader.getQuotes().add(newQuote);
-
         // todo потенциально лучше сейвить quoteRepository. Чем меньше вложенностей у сохраняемой сущности - тем эффективнее это будет происходить.
-        readerRepository.save(reader);
+        // Ну бля, тут уже есть ответ на вопрос чем лучше. Просто соглашусь. Мб дополню, что он при сохранении через репозиторий цитат работает с одной сущностью, а
+        // через репозиторий читателей работает с несколькими сущностями (Book, reader, quote). Иногда (каюсь, подсмотрел) может произвести UPDATE, что не всегда может потребоваться.
+        // Короче. Одна сущность - quoteRepository и в жопу не долбимся.
+        quoteRepository.save(newQuote);
     }
 
     @Override
