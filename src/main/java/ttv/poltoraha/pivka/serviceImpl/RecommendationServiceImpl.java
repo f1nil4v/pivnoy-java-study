@@ -98,9 +98,15 @@ public class RecommendationServiceImpl implements RecommendationService {
      */
     @Override
     public List<Quote> recommendQuoteByBook(Integer book_id) {
-        if (bookRepository.existsById(book_id)) {
+        if (!bookRepository.existsById(book_id)) {
             throw new EntityNotFoundException(String.format("Entity book with id = %s was not found", book_id));
         }
+        // Или как вариант, чтобы выебнуться:
+        // Book book = bookRepository.findById(book_id)
+        //    .orElseThrow(() -> new EntityNotFoundException(
+        //        String.format("Entity book with id = %s was not found", book_id)
+        //    ));
+        // Но первый вариант самый простой. Оставлю его
 
         val readings = readingRepository.findAllByBook_id(book_id);
 

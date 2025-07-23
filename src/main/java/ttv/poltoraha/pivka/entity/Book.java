@@ -38,4 +38,7 @@ public class Book {
         return new HashSet<>(Arrays.asList(tagArray));
     }
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Edition> editions;
+
 }
