@@ -1,0 +1,25 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <!--JUNIOR-разработчик. Чел, которому нужен другой чел и опора, чтобы он решал задачки.-->
+    <!--MIDDLE-разработчик. Чел, которому не нужен другой чел. Он может самостоятельно решить задачки.-->
+    <!--SENIOR-разработчик. Чел, которому не нужен другой чел. Чел, который может самостоятельно решить задачки. Чел, который решает задачки самым эффективным способом.-->
+    <changeSet id="create-table-edition" author="f1nil4v">
+        <createTable tableName="edition">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="format" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="publication_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_edition_book" references="book(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
