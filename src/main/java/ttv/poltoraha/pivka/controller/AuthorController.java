@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ttv.poltoraha.pivka.dao.request.AuthorRequestDto;
+import ttv.poltoraha.pivka.dao.response.AuthorResponseDto;
 import ttv.poltoraha.pivka.entity.Book;
 import ttv.poltoraha.pivka.metrics.CustomMetrics;
 import ttv.poltoraha.pivka.service.AuthorService;
@@ -20,6 +21,20 @@ public class AuthorController {
     private final AuthorService authorService;
     private final Logger logger = LoggerFactory.getLogger(AuthorController.class);
     private final CustomMetrics appMetrics;
+
+    @GetMapping("/list")
+    public List<AuthorResponseDto> getAllAuthors() {
+        logger.info("GET /author/list — Fetching all authors");
+
+        appMetrics.increment("api.request.count", "controller", "author", "action", "list");
+        var sample = appMetrics.startTimer();
+
+        List<AuthorResponseDto> result = authorService.getAuthorList();
+
+        appMetrics.stopTimer(sample, "api.db.timer", "controller", "author", "action", "list");
+
+        return result;
+    }
 
     @PostMapping("/create")
     public void createAuthor(@RequestBody AuthorRequestDto authorRequestDto) {
