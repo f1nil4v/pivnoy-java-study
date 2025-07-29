@@ -7,7 +7,6 @@ import ttv.poltoraha.pivka.entity.Book;
 import ttv.poltoraha.pivka.entity.Review;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static ttv.poltoraha.pivka.app.util.TestConst.*;
 
