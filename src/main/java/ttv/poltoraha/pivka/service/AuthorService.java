@@ -1,6 +1,7 @@
 package ttv.poltoraha.pivka.service;
 
 import ttv.poltoraha.pivka.dao.request.AuthorRequestDto;
+import ttv.poltoraha.pivka.dao.response.AuthorResponseDto;
 import ttv.poltoraha.pivka.entity.Author;
 import ttv.poltoraha.pivka.entity.Book;
 
@@ -13,4 +14,5 @@ public interface AuthorService {
     public void addBook(Integer id, Book book);
     public void addBooks(Integer id, List<Book> books);
     public List<Author> getTopAuthorsByTag(String tag, int count);
+    List<AuthorResponseDto> getAuthorList();
 }
