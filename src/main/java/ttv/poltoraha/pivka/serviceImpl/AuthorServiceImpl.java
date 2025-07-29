@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ttv.poltoraha.pivka.dao.request.AuthorRequestDto;
+import ttv.poltoraha.pivka.dao.response.AuthorResponseDto;
 import ttv.poltoraha.pivka.entity.Author;
 import ttv.poltoraha.pivka.entity.Book;
 import ttv.poltoraha.pivka.mapping.MappingUtil;
@@ -66,6 +67,14 @@ public class AuthorServiceImpl implements AuthorService {
 
         author.getBooks().add(book);
         logger.info("Book successfully added to author with id {}", id);
+    }
+
+    @Override
+    public List<AuthorResponseDto> getAuthorList() {
+        List<Author> authors = authorRepository.findAll();
+        return authors.stream()
+                .map(MappingUtil::toResponseDto)
+                .toList();
     }
 
     @Override
