@@ -45,7 +45,11 @@ management:
   endpoint:
     prometheus:
       enabled: true
-
+      
+feature:
+  flag:
+    encodePasswords: true
+    
 book-facts:
   facts:
     - id: "Эротика"
