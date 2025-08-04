@@ -3,6 +3,7 @@ package ttv.poltoraha.pivka.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,29 +23,37 @@ import ttv.poltoraha.pivka.serviceImpl.UserDetailsServiceImpl;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
 
+    // Цепочка 1: для /actuator/prometheus — открыта и без CSRF
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain actuatorSecurityChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/actuator/prometheus")
+                .authorizeHttpRequests(authz -> authz
+                        .anyRequest().permitAll()
+                )
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable());
+        return http.build();
+    }
+
+    // Цепочка 2: основная — для всего остального
+    @Bean
+    @Order(2)
+    public SecurityFilterChain appSecurityChain(HttpSecurity http) throws Exception {
         http
                 .userDetailsService(userDetailsService)
-                .authorizeHttpRequests(authorize -> authorize
+                .authorizeHttpRequests(authz -> authz
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
-                // без этой штуки вам не даст авторизоваться в веб-окошке бд h2
-                .csrf()
-                .disable()
-                .cors()
-                .disable()
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .headers(headers -> headers.frameOptions().sameOrigin());
-
-//        http.authorizeRequests().requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/**").permitAll().anyRequest().authenticated()
-//                .and().formLogin().permitAll().and().logout().permitAll().and().httpBasic();
-//                http.cors().disable().csrf().disable();
 
         return http.build();
     }
@@ -53,4 +62,5 @@ public class SecurityConfig{
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    // Grafana не принимала эндпоинт Prometheus (решил попробовать графики строить).
 }
