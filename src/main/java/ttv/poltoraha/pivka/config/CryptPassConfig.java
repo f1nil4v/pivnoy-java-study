@@ -2,6 +2,7 @@ package ttv.poltoraha.pivka.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ttv.poltoraha.pivka.entity.MyUser;
@@ -15,8 +16,15 @@ public class CryptPassConfig {
     private final MyUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${feature.flag.encodePasswords:false}")
+    private boolean encodePasswordsFlag;
+
     @PostConstruct
     public void encodeExistingPasswords() {
+        if (!encodePasswordsFlag) {
+            return;
+        }
+
         List<MyUser> users = userRepository.findAll();
 
         for (MyUser user : users) {

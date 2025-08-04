@@ -46,6 +46,10 @@ management:
   endpoint:
     metrics:
       enabled: true
+
+feature:
+  flag:
+    encodePasswords: true
 book-facts:
   facts:
     - id: "Эротика"
