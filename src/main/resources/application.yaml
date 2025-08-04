@@ -41,11 +41,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
-      base-path: /actuator
+        include: prometheus
   endpoint:
-    metrics:
+    prometheus:
       enabled: true
+
 book-facts:
   facts:
     - id: "Эротика"
