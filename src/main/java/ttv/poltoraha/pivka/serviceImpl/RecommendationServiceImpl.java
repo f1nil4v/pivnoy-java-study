@@ -10,6 +10,7 @@ import ttv.poltoraha.pivka.repository.BookRepository;
 import ttv.poltoraha.pivka.repository.ReaderRepository;
 import ttv.poltoraha.pivka.repository.ReadingRepository;
 import ttv.poltoraha.pivka.service.AuthorService;
+import ttv.poltoraha.pivka.service.BookService;
 import ttv.poltoraha.pivka.service.RecommendationService;
 import util.MyUtility;
 
@@ -28,6 +29,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final AuthorService authorService;
     private final BookRepository bookRepository;
     private final ReadingRepository readingRepository;
+    private final BookService bookService;
 
     /**
      * Чё делает метод и чё он должен делать:
@@ -85,7 +87,32 @@ public class RecommendationServiceImpl implements RecommendationService {
      */
     @Override
     public List<Book> recommendBook(String username) {
-        return null;
+        val reader = MyUtility.findEntityById(readerRepository.findByUsername(username), "reader", username);
+        val mostPopularTags = reader.getReadings().stream()
+                .map(Reading::getBook) // Получаем книги
+                .flatMap(book -> book.getTags().stream()) // Получаем теги из каждой книги
+                .collect(Collectors.groupingBy(tag -> tag, Collectors.counting())) // Группируем теги и считаем их количество
+                .entrySet()
+                .stream() // Преобразуем в поток
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed()) // Сортируем по количеству вхождений (по убыванию)
+                .limit(2) // Берем только два самых популярных тега
+                .map(Map.Entry::getKey) // Извлекаем только теги
+                .toList(); // Собираем в список
+
+        if (mostPopularTags.size() < 2) {
+            // todo по-хорошему прокинуть ошибку, да и вообще сделать ControllerAdvice
+            return null;
+        }
+
+        val mostRecommendedBook = bookService.getTopBooksByTag(mostPopularTags.get(0), 3);
+        val secondMostRecommendedBook = bookService.getTopBooksByTag(mostPopularTags.get(1), 2);
+
+        return Stream.concat(
+                        mostRecommendedBook.stream(),
+                        secondMostRecommendedBook.stream()
+                )
+                .distinct()
+                .toList();
     }
 
     /**
