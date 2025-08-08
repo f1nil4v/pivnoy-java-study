@@ -11,5 +11,5 @@ public class BookResponseDto {
     private String article;
     private String genre;
     private Double rating;
-    private List<String> tags;
+    private String tags;
 }
