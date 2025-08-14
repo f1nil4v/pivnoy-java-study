@@ -1,5 +1,6 @@
 package ttv.poltoraha.pivka.serviceImpl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -42,7 +43,8 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void addFinishedBook(String username, Integer bookId) {
-        val reader = MyUtility.findEntityById(readerRepository.findByUsername(username), "reader", username);
+        val reader = readerRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("Entity reader with id = " + username + " was not found"));
 
         val book = MyUtility.findEntityById(bookRepository.findById(bookId), "book", bookId.toString());
 
@@ -57,6 +59,9 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void createReader(String username, String password) {
+        if (readerRepository.findByUsername(username).isPresent()) {
+            throw new EntityExistsException(String.format("Reader with username \"%s\" already exist", username)); // Добавил проверочку на уникальность
+        }
         val reader = new Reader();
         reader.setUsername(username);
         reader.setPassword(password);
