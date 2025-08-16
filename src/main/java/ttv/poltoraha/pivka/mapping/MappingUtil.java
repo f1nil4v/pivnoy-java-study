@@ -63,7 +63,7 @@ public class MappingUtil {
                 .article(book.getArticle())
                 .genre(book.getGenre())
                 .rating(book.getRating())
-                .tags(book.getTags().toString())
+                .tags(book.getTags() == null ? "" : book.getTags().toString())
                 .build();
     }
 }
