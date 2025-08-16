@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ttv.poltoraha.pivka.dao.response.BookResponseDto;
 import ttv.poltoraha.pivka.entity.Book;
 import ttv.poltoraha.pivka.entity.Review;
+import ttv.poltoraha.pivka.mapping.MappingUtil;
 import ttv.poltoraha.pivka.repository.BookRepository;
 import ttv.poltoraha.pivka.service.BookService;
 import util.MyUtility;
@@ -37,5 +40,9 @@ public class BookServiceImpl implements BookService {
         Pageable pageable = PageRequest.of(0, count);
         val books = bookRepository.findTopBooksByTag(tag);
         return bookRepository.findTopBooksByTag(tag, pageable);
+
+    public List<BookResponseDto> findBooksByAuthorSurname(String surname) {
+        List<Book> books = bookRepository.findBooksByAuthorSurname(surname);
+        return books.stream().map(MappingUtil::toResponseDto).toList();
     }
 }
