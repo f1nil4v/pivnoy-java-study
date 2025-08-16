@@ -51,10 +51,19 @@ public class MappingUtil {
                                         .article(book.getArticle())
                                         .genre(book.getGenre())
                                         .rating(book.getRating())
-                                        .tags(book.getTags().stream().toList())
+                                        .tags(book.getTags().toString())
                                         .build())
                                 .toList()
                 )
+                .build();
+    }
+
+    public static BookResponseDto toResponseDto(Book book) {
+        return BookResponseDto.builder()
+                .article(book.getArticle())
+                .genre(book.getGenre())
+                .rating(book.getRating())
+                .tags(book.getTags() == null ? "" : book.getTags().toString())
                 .build();
     }
 }
