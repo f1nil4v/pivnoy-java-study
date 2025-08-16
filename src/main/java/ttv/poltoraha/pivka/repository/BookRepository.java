@@ -12,6 +12,11 @@ import java.util.List;
 
 @Repository
 public interface BookRepository extends CrudRepository<Book, Integer> {
+    @Query("SELECT DISTINCT b FROM book b JOIN b.author a WHERE b.tags LIKE %:tag% ORDER BY a.avgRating DESC, a.id ASC")
+    List<Book> findTopBooksByTag(@Param("tag") String tag);
+
+    @Query("SELECT DISTINCT b FROM book b JOIN b.author a WHERE b.tags LIKE %:tag% ORDER BY a.avgRating DESC, a.id ASC")
+    List<Book> findTopBooksByTag(@Param("tag") String tag,  Pageable pageable);
     @Query(value = """
         SELECT b.*
         FROM book b
